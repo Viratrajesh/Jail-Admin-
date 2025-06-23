@@ -275,8 +275,8 @@ async def next_page(bot, query):
         btn.append(
             [InlineKeyboardButton(text="🚸 ɴᴏ ᴍᴏʀᴇ ᴘᴀɢᴇs 🚸", callback_data="buttons")]
 
-    btn.append([
-        InlineKeyboardButton(text="⪻ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ ᴘᴀɢᴇ", callback_data=f"next_{req}_{key}_{orginal_offset}"),])
+    btn.append(
+            [InlineKeyboardButton(text="⪻ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ ᴘᴀɢᴇ", callback_data=f"next_{req}_{key}_{orginal_offset}"),])
     await query.message.edit_text(cap + links + js_ads, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML, reply_markup=InlineKeyboardMarkup(btn))
     return
 
@@ -334,8 +334,6 @@ async def year_search(client: Client, query: CallbackQuery):
 	InlineKeyboardButton("📥 𝗦𝗲𝗻𝗱 𝗔𝗹𝗹 𝗙𝗶𝗹𝗲𝘀 📥", callback_data=batch_link),
         ])
     btn.insert(1, [
-        InlineKeyboardButton("ǫᴜᴀʟɪᴛʏ ", callback_data=f"qualities#{key}#{offset}#{req}"),
-	InlineKeyboardButton("ꜱᴇᴀꜱᴏɴ", callback_data=f"seasons#{key}#{offset}#{req}"),
         InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇ ", callback_data=f"languages#{key}#{offset}#{req}")
     ])    
     
@@ -387,28 +385,6 @@ async def quality_cb_handler(client: Client, query: CallbackQuery):
     btn.append([InlineKeyboardButton(text="⪻ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ ᴘᴀɢᴇ", callback_data=f"next_{req}_{key}_{offset}")])
     await query.message.edit_text("<b>ɪɴ ᴡʜɪᴄʜ ǫᴜᴀʟɪᴛʏ ᴅᴏ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏsᴇ ғʀᴏᴍ ʜᴇʀᴇ ↓↓</b>", reply_markup=InlineKeyboardMarkup(btn))
     return
-
-@Client.on_callback_query(filters.regex(r"^quality_search#"))
-async def quality_search(client: Client, query: CallbackQuery):
-    _, qul, key, offset, orginal_offset, req = query.data.split("#")
-    if int(req) != query.from_user.id:
-        return await query.answer(script.ALRT_TXT, show_alert=True)	
-    offset = int(offset)
-    search = BUTTONS.get(key)
-    cap = CAP.get(key)
-    if not search:
-        await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
-        return 
-    search = search.replace("_", " ")
-    files, n_offset, total = await get_search_results(f"{search} {qul}", max_results=int(MAX_BTN), offset=offset)
-    try:
-        n_offset = int(n_offset)
-    except:
-        n_offset = 0
-    files = [file for file in files if re.search(qul, file.file_name, re.IGNORECASE)]
-    if not files:
-        await query.answer(f"sᴏʀʀʏ ǫᴜᴀʟɪᴛʏ {qul.title()} ɴᴏᴛ ғᴏᴜɴᴅ ғᴏʀ {search}", show_alert=1)
-        return
 
     batch_ids = files
     temp.FILES_ID[f"{query.message.chat.id}-{query.id}"] = batch_ids
