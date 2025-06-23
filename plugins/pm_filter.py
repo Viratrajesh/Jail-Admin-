@@ -280,30 +280,6 @@ async def next_page(bot, query):
     await query.message.edit_text(cap + links + js_ads, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML, reply_markup=InlineKeyboardMarkup(btn))
     return
 
-
-
-@Client.on_callback_query(filters.regex(r"^years_search#"))
-async def year_search(client: Client, query: CallbackQuery):
-    _, year, key, offset, orginal_offset, req = query.data.split("#")
-    if int(req) != query.from_user.id:
-        return await query.answer(script.ALRT_TXT, show_alert=True)	
-    offset = int(offset)
-    search = BUTTONS.get(key)
-    cap = CAP.get(key)
-    if not search:
-        await query.answer(script.OLD ALERT_TXT.format(query.from_user.first_name),show_alert=True)
-        return 
-    search = search.replace("_", " ")
-    files, n_offset, total = await get_search_results(f"{search} {year}", max_results=int(MAX_BTN), offset=offset)
-    try:
-        n_offset = int(n_offset)
-    except:
-        n_offset = 0
-    files = [file for file in files if re.search(year, file.file_name, re.IGNORECASE)]
-    if not files:
-        await query.answer(f"sᴏʀʀʏ ʏᴇᴀʀ {year.title()} ɴᴏᴛ ғᴏᴜɴᴅ ғᴏʀ {search}", show_alert=1)
-        return
-
     batch_ids = files
     temp.FILES_ID[f"{query.message.chat.id}-{query.id}"] = batch_ids
     batch_link = f"batchfiles#{query.message.chat.id}#{query.id}#{query.from_user.id}"
@@ -326,7 +302,7 @@ async def year_search(client: Client, query: CallbackQuery):
     else:
         btn = [[
                 InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'files#{reqnxt}#{file.file_id}'),]
-                   for file in files
+                   for file i files
               ]
         
    
@@ -342,48 +318,10 @@ async def year_search(client: Client, query: CallbackQuery):
             [InlineKeyboardButton(text="🚸 ɴᴏ ᴍᴏʀᴇ ᴘᴀɢᴇs 🚸", callback_data="buttons")]
         )
     elif n_offset == 0:
-        btn.append(
-            [InlineKeyboardButton("⪻ ʙᴀᴄᴋ", callback_data=f"years_search#{year}#{key}#{offset- int(MAX_BTN)}#{orginal_offset}#{req}"),
-             InlineKeyboardButton(f"{math.ceil(offset / int(MAX_BTN)) + 1}/{math.ceil(total / int(MAX_BTN))}", callback_data="pages",),
-            ])
-    elif offset==0:
-        btn.append(
-            [InlineKeyboardButton(f"{math.ceil(offset / int(MAX_BTN)) + 1}/{math.ceil(total / int(MAX_BTN))}",callback_data="pages",),
-             InlineKeyboardButton("ɴᴇxᴛ ⪼", callback_data=f"years_search#{year}#{key}#{n_offset}#{orginal_offset}#{req}"),])
-    else:
-        btn.append(
-            [InlineKeyboardButton("⪻ ʙᴀᴄᴋ", callback_data=f"years_search#{year}#{key}#{offset- int(MAX_BTN)}#{orginal_offset}#{req}"),
-             InlineKeyboardButton(f"{math.ceil(offset / int(MAX_BTN)) + 1}/{math.ceil(total / int(MAX_BTN))}", callback_data="pages",),
-             InlineKeyboardButton("ɴᴇxᴛ ⪼", callback_data=f"years_search#{year}#{key}#{n_offset}#{orginal_offset}#{req}"),])
 
     btn.append([
         InlineKeyboardButton(text="⪻ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ ᴘᴀɢᴇ", callback_data=f"next_{req}_{key}_{orginal_offset}"),])
     await query.message.edit_text(cap + links + js_ads, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML, reply_markup=InlineKeyboardMarkup(btn))
-    return
-
-@Client.on_callback_query(filters.regex(r"^qualities#"))
-async def quality_cb_handler(client: Client, query: CallbackQuery):
-    _, key, offset, req = query.data.split("#")
-    if int(req) != query.from_user.id:
-        return await query.answer(script.ALRT_TXT, show_alert=True)
-    btn= []
-    for i in range(0, len(QUALITIES)-1, 3):
-        btn.append([
-            InlineKeyboardButton(
-                text=QUALITIES[i].title(),
-                callback_data=f"quality_search#{QUALITIES[i].lower()}#{key}#0#{offset}#{req}"
-            ),
-            InlineKeyboardButton(
-                text=QUALITIES[i+1].title(),
-                callback_data=f"quality_search#{QUALITIES[i+1].lower()}#{key}#0#{offset}#{req}"
-            ),
-            InlineKeyboardButton(
-                text=QUALITIES[i+2].title(),
-                callback_data=f"quality_search#{QUALITIES[i+2].lower()}#{key}#0#{offset}#{req}"
-            ),
-        ])
-    btn.append([InlineKeyboardButton(text="⪻ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ ᴘᴀɢᴇ", callback_data=f"next_{req}_{key}_{offset}")])
-    await query.message.edit_text("<b>ɪɴ ᴡʜɪᴄʜ ǫᴜᴀʟɪᴛʏ ᴅᴏ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏsᴇ ғʀᴏᴍ ʜᴇʀᴇ ↓↓</b>", reply_markup=InlineKeyboardMarkup(btn))
     return
 
     batch_ids = files
